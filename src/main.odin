@@ -526,7 +526,7 @@ execute :: proc(chip: ^Chip8, instruction: u16) {
 
                 // Font character
                 case 0x29: {
-                    chip.i = u16(5 * chip.reg[x])
+                    chip.i = u16(5 * chip.reg[x] + FONT_ADDRESS)
                 }
 
                 // Binary-coded decimal conversion
