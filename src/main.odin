@@ -580,8 +580,43 @@ update_keypad :: proc(pad: ^Keypad) {
     pad.key[0xF] = raylib.IsKeyDown(raylib.KeyboardKey.V)
 }
 
-// This is very scuffed but it works somehow
+// Honestly im done at this point
 render :: proc(chip: ^Chip8) {
+    raylib.BeginDrawing()
+    defer raylib.EndDrawing()
+    raylib.ClearBackground(raylib.BLACK)
+
+    display := &chip.display
+    scale := 1.0
+    xoffset: i32 = 0
+    yoffset: i32 = 0
+
+    if f64(display.width) / f64(display.height) > f64(display.fb_width) / f64(display.fb_height) {
+        scale = f64(display.height) / f64(display.fb_height)
+        xoffset = i32((f64(display.width) - scale * f64(display.fb_width)) / 2.0)
+    }
+    else {
+        scale = f64(display.width) / f64(display.fb_width)
+        yoffset = i32((f64(display.height) - scale * f64(display.fb_height)) / 2.0)
+    }
+
+    for y in 0..<chip.display.fb_height {
+        for x in 0..<chip.display.fb_width {
+            pixel := chip.display.frame_buffer[x + y * chip.display.fb_width]
+
+            if pixel {
+                raylib.DrawRectangle(i32(f64(x) * scale) + xoffset, i32(f64(y) * scale) + yoffset, i32(scale + 0.5), i32(scale + 0.5), raylib.WHITE)
+            }
+            else {
+                raylib.DrawRectangle(i32(f64(x) * scale) + xoffset, i32(f64(y) * scale) + yoffset, i32(scale + 0.5), i32(scale + 0.5), raylib.DARKGRAY)
+            }
+        }
+    }
+}
+
+// Old way of rendering
+// This is very scuffed but it works somehow
+render1 :: proc(chip: ^Chip8) {
     raylib.BeginDrawing()
         raylib.ClearBackground(raylib.BLACK)
         
